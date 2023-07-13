@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "heimdall-lavish",
+  "private_key_id": "437cf5dc26f34ffee9aa336f9b54b89be70014a0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDiyy2CpZjn6s6d\nBmbwRsuc6eeqayMrrsqO01gsPemC9J6nVsoINXydrlq+0N97SEIttlaokWhfJhec\n++PkTmvlPHpXNxIQi9YdrAAgxektLq4OEzeS3aX5fyUlDQFvcrLfGXciL6mCxhib\nbIcHl/jis8ayb217PNThC7C8xk4pHrBH5bP2b4hKR9n8N+khtUP+eyqFRQepdSqj\nmjNYC/HYB0pByqdVMk26Bj85dWj96my7tVhjQpaaEBtr9j5LEHdYdaIk6S/RhaK2\nxCrYfWy9f1gU5TrM/q374r5M/XPO23V9aJVKPRM6qkmsq52fjoTNuBsBiqwcOiBF\n+2BAHs7ZAgMBAAECggEAFen09U1D95DQMwsF0ky86uYNDQH6LYPfrapNOEUpNY6m\nb9vqfJ2Sc3f/67UqCvMB9gHK4NHgCGWZXYFXVV2gfk94MMow9ClW4JoYjxIghE2g\n4tpHgejp2zBGagyWKWsnTnha8xIw6mJyyT3U1E6CbYFafy5WIVTQ6wfipXLx5XYT\nmMnqSh6Thn2h1aL5PRxVQB45hZu14s6pG2OShcsQfPJlvZuS0/a//EqyA90QNwr1\niTTJtIU0fUmDxv5KX/DM8PBbZ7t0ignCoHnVpNJeaFHJAzY6pCdCZkghhBB9Qqgz\nrz/rNoPxHlGLAPEBv9wwZCmOF5vHwF7Nhlx63keQSwKBgQDxL9s3fxdqwD9SR2JV\n3nsqAWCPxxr/tMrtfBNsuvjcPB+37zw6GHaipix4/FRKyd8e2kFjJ3qn+6LkmYel\nbN05tvqLg2d7QNCjGPFXHkfRI6P4iCuMgfL6uD230p4Jv2UrQmZOEkDJNKsxw4Au\nRHqrw2GqLA+R6eLHOao1i36oDwKBgQDwuQSujZWJk3JAi4vnOYq8ztEVXN5kwPUx\nXjx+9phhBiEmv2lwbe3HX9MhzVjnOBmXfYvaf81O9Ijc+Vwgq8gI57Wm/WbFOKBF\n+BO04DCBPEMYCRuEwoJ4heb4CbRGvfbKpZa+3Pq/XuM01iYM8XInAjbRKdDAUp6V\nVmDDGj1ylwKBgQDskm9pGQ1EFXxG3WQULB0ND7rCbJ8L8C8YEJsRDLirdYH7Lfsa\nVQKQ+YQnzAF2NlrXbWeztXa3LLkTl5CY75ZzVQqeK+8l02aShBW9ySLSfi4IyrBE\nqvZFfNB07W88ynKWoxOsQnUvpqzBLC0ftOXKcuPqQjuneQ2LMwHEcaZzewKBgF5e\nafN0FddlMjkTe7kd2cHC4jyZt6WP7492/ghX68y9dmmWSGOG9NxgOIjb06pxV7cH\nxLfXukjlnHHkX7V/ImA7Vf8tAAj49fv4EOGrsdg4I6VcjKkzB6rv82fxhfblqcYv\nvDT+tF4peLDR8wDH9pRMTekZl3iN6xVoU26o7sXpAoGBAN5EFfBBMM0uL2kp9TAd\nxvD8qSIHP/MFXBIa2yDFhzvklRd1LMI+8exp0dJx1B43aHqHV4r+B7MsPnQUKD7L\n7BDD7ZENKHjgvYaT+Bjesfb7PbVZv4yiLh4RR3cEEIC+J6bLKCr08tgH1tCN8Pdc\nPsDsMfuWas9Q4PGfaJRb/AiF\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-35hrb@heimdall-lavish.iam.gserviceaccount.com",
+  "client_id": "118354963209727011585",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-35hrb%40heimdall-lavish.iam.gserviceaccount.com"
+}

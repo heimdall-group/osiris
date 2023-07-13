@@ -1,0 +1,46 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/vuetify": "^1.12.3",
+    "@types/fluent-ffmpeg": "^2.1.21",
+    "@types/formidable": "^3.4.0",
+    "@types/node": "^18",
+    "nuxt": "^3.6.0",
+    "typescript": "latest",
+    "vuetify": "^3.3.5"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@fortawesome/fontawesome-free": "^6.4.0",
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-brands-svg-icons": "^6.4.0",
+    "@fortawesome/free-regular-svg-icons": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@mdi/font": "^7.2.96",
+    "@pinia/nuxt": "^0.4.11",
+    "compressorjs": "^1.2.1",
+    "dotenv": "^16.3.1",
+    "firebase": "^9.23.0",
+    "firebase-admin": "^11.9.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "formidable": "^3.5.0",
+    "h3-formidable": "^0.3.6",
+    "mongoose": "^7.3.1",
+    "pinia": "^2.1.4",
+    "sass": "^1.62.0"
+  },
+  "overrides": {
+    "vue": "latest"
+  }
+}
