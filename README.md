@@ -13,6 +13,17 @@ pnpm install
 yarn install
 ```
 
+Create a .env file and fill it from .env.example:
+
+```.env
+MONGO_URL = ''
+FIREBASE_API_KEY = ''
+FIREBASE_AUTH_DOMAIN = ''
+FIREBASE_PROJECT_ID = ''
+
+DEFAULT_PROFILE_AVATAR_URL = ''
+```
+
 ## Development Server
 
 Start the development server on `http://localhost:3000`:
