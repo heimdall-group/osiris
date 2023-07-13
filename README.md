@@ -30,22 +30,6 @@ yarn dev
 
 ## Documentation
 
-### Response structure:
-- API response:
-```js
-  return {
-    success: true | false
-    message: 'Internal: Error message'
-  }
-```
-- Throwing firebase errors:
-```js
-  throw {
-    code: 'auth/your-error',
-    message: 'Internal: Error message'
-  }
-```
-
 ### Icon library:
   - Font-Awesome:
     - [Solid icons](https://fontawesome.com/search?o=r&m=free&s=solid)
