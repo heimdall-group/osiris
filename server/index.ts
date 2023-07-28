@@ -11,7 +11,7 @@ export default async () => {
   try {
     await mongoose.connect(config.db_url);
     console.log("DB connection true");
-  } catch (err) {
-    console.error("DB connection false", err);
+  } catch (error) {
+    console.error("DB connection false", error);
   }
 };

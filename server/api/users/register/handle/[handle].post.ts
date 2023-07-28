@@ -1,7 +1,7 @@
-import { Return } from 'models/return.model';
 import Users from "~/server/models/users";
+import { Return_Api } from 'models/return.model';
 
-export default defineEventHandler(async (event):Promise<Return> => {
+export default defineEventHandler(async (event):Promise<Return_Api> => {
   try {
     if (event.context.params === undefined) {
       throw 'Missing parameters';
@@ -22,12 +22,14 @@ export default defineEventHandler(async (event):Promise<Return> => {
       }
     }
     
-  } catch (err: any) {
-    console.log(err)
+  } catch (error: any) {
     return {
-      error: err,
+      error: error,
       success: false,
-      message: 'users/register/handle/post',
+      server_message: {
+        request_endpoint: 'users/handle',
+        request_type: 'POST',
+      },
     }
   }
  });

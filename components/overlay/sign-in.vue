@@ -1,3 +1,12 @@
+<script setup lang="ts">
+  import { useStore } from "~/stores/main";
+  const store = useStore();
+  const signInAlert = computed(() => store.getSignInAlert)
+  const closeDialog = () => {
+    store.setSignInAlert(false);
+  };
+</script>
+
 <template>
   <v-dialog
       v-model="signInAlert"
@@ -9,16 +18,15 @@
         rounded="lg"
         class="pa-12"
       >
-        <v-row justify="end">
-          <v-btn
-            @click="closeDialog"
-            variant="text"
-            flat
-            position="absolute"
-          >
-            <font-awesome-icon icon="fa-solid fa-xmark" />
-          </v-btn>
-        </v-row>
+        <v-btn
+          @click="closeDialog"
+          variant="text"
+          flat
+          class="close-button"
+          position="absolute"
+        >
+          <font-awesome-icon icon="fa-solid fa-xmark" />
+        </v-btn>
         <v-card-title class="text-center">You need to be signed in to do this!</v-card-title>
         <v-card-text class="text-center">If you have an account already plase sign in, if not feel free to sign up</v-card-text>
         <v-row>
@@ -33,36 +41,10 @@
     </v-dialog>
 </template>
 
-<script lang="ts">
-import { useStore } from "~/stores/main";
-
-export default {
-setup() {
-  const store = useStore();
-  return {
-    store,
+<style scoped>
+  .close-button {
+    top: 0;
+    right: 0;
+    margin: 16px;
   }
-},
-name: 'overlaySignInComponent',
-data() {
-  return {
-    dialog: true,
-  };
-},
-computed: {
-  signInAlert() {
-    return this.store.getSignInAlert as boolean;
-  }
-},
-methods: {
-  closeDialog() {
-    this.store.setSignInAlert(false);
-  },
-},
-mounted() {
-},
-updated() {},
-components: {},
-};
-
-</script>
+</style>

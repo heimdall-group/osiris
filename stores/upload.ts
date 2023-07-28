@@ -16,8 +16,11 @@ export const useUploadStore = defineStore('upload', {
     setUploads(upload:Upload) {
       this.uploads[upload.upload_id] = upload;
     },
-    completeUpload(upload_id:string) {
+    setCompleted(upload_id:string) {
       this.uploads[upload_id].completed = true;
-    }
+    },
+    setError(upload_id:string) {
+      this.uploads[upload_id].error = true;
+    },
   },
 });

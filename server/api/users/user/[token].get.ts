@@ -1,8 +1,8 @@
 import { getAuth } from 'firebase-admin/auth';
-import { documentId } from 'firebase/firestore';
 import Users from '~/server/models/users';
+import { Return_Api } from 'models/return.model';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event):Promise<Return_Api> => {
   try {
     if (event.context.params === undefined) {
       throw 'Missing parameter'
@@ -27,11 +27,14 @@ export default defineEventHandler(async (event) => {
       },
       success: true,
     }
-  } catch(error) {
+  } catch(error: any) {
     return {
       error: error,
       success: false,
-      message: 'posts/post/post',
+      server_message: {
+        request_endpoint: 'users/user',
+        request_type: 'GET',
+      },
     }
   }
  })

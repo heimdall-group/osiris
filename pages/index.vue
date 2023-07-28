@@ -10,7 +10,6 @@
     </v-row>
     <v-row class="ma-0" justify="center">
       <v-col class="testing-v-col">
-        <post-upload />
         <v-btn @click="inputHandler">Submit</v-btn>
         <v-btn @click="clickHandler">Get</v-btn>
       </v-col>
@@ -22,11 +21,11 @@
       :bottom="'200px'"
       @intersection-handler="intersectionHandler"
     >
-      <post 
+      <posts
         v-for="(post, index) in pagnation_count" 
         :key="index"
         cols="12"
-        :post_prop="post"
+        :post="post"
       />
     </pagnation>
   </v-container>
@@ -114,36 +113,29 @@ export default {
           this.loading = false
         } else {
           const test = {
-            post_id: '6499d07faaf3e1d53ff70ce2' as unknown as ObjectId,
-            uid: '3tSPd5FGiua31xx02ZITogxwmGA2',
-            user: {
-              handle: 'felixrydberg',
-              displayname: 'felix rydberg',
-              avatar_url: 'https://cdn.vuetifyjs.com/images/john.png',
-              verified: true,
+            "_id": "64a32e0639d40c8fd4564a55",
+            "post_id": "64c2bb7c8433ee38e1ab8bc0",
+            "user": {
+              "verified": true,
+              "handle": "felixrydberg",
+              "avatar_url": "https://lh3.googleusercontent.com/a/AAcHTtd38EzKFJ_tFxd5bcxRUpk1QU65zk1XccDzob1towMl=s96-c"
             },
-            liked: false,
-            likes: [],
-            comments: [],
-            urls: [{
-                url: '/photomode_16042022_190608.png',
-                type: 'image',
-              },
-              {
-                url: '/photomode_15042022_215001.png',
-                type: 'image',
-              }, 
-              {
-                url: '/photomode_16042022_185656.png',
-                type: 'image',
-              },
+            "liked_by_current_user": false,
+            "urls": [
+              "https://s3.eu-central-2.wasabisys.com/heimdall-osiris/users/posts/1690483579739_-1628798076_100-0.webp"
             ],
-            likes_total: 0,
-            comments_total: 0,
-            caption: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,',
-            users_tagged: [],
-            published: true,
-            created_at: new Date().getTime(),
+            "likes_total": 0,
+            "comments_total": 0,
+            "caption": "Composition Api working??",
+            "created_at": 1690483580990,
+            "likes": {
+              "likes": [],
+              "skip_amount": 0
+            },
+            "comments": {
+              "comments": [],
+              "skip_amount": 0
+            }
           }
           this.pagnation_count.push(test, test, test, test, test)
         }

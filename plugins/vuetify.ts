@@ -19,12 +19,19 @@ const light = {
     }
 }
 
+
+
+
 const dark = {
     dark: true,
     colors: {
       background: '#121212',
       surface: '#1d1d1d',
-      primary: '#FF7597',
+      "surface-02": '#212121',
+      "surface-03": '#242424',
+      "surface-04": '#262626',
+      "surface-05": '#2c2c2c',
+      primary: '#0e9ede',
       secondary: '#FF0266',
       error: '#CF6679',
       info: '#2196F3',

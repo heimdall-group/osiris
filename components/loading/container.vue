@@ -1,3 +1,16 @@
+<script setup lang="ts">
+  const props = defineProps({
+    lines: {
+      type: Number, 
+      required: true,
+    },
+    vh: {
+      type: String,
+      required: false,
+    }
+  })
+</script>
+
 <template>
   <v-container fluid :class="['loader-container', `loader-height-${vh}`, 'pa-0']">
     <v-row
@@ -12,29 +25,3 @@
     </v-row>
   </v-container>
 </template>
-
-<script lang="ts">
-export default {
-  setup() {},
-  name: 'loadingContainerComponent',
-  data() {
-    return {};
-  },
-  computed: {},
-  props: {
-    lines: {
-      type: Number, 
-      required: true,
-    },
-    vh: {
-      type: String,
-      required: false,
-    }
-  },
-  methods: {},
-  mounted() {},
-  updated() {},
-  components: {},
-  emits: [],
-};
-</script>

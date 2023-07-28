@@ -21,6 +21,14 @@ export const profilePage_addFollower = async ():Promise<Return> => {
   try {
     const route = useRoute();
     const handle = route.params.handle
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'profile/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    }
     const result = await profile_addFollower(handle as string, profilePage_followStateUpdated)
     if (result.success) {
       return {
@@ -28,13 +36,18 @@ export const profilePage_addFollower = async ():Promise<Return> => {
         data: true,
       }
     } else {
-      throw 'Follower not added'
+      throw {
+        message: 'Follower not added',
+        code: 'profile/follower-not-added',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
     }
 
   } catch(error:any) {
-    profile_handleErrors(error)
+    handle_error(error)
     return {
-      error: error,
       success: false,
     }
   }
@@ -44,6 +57,14 @@ export const profilePage_removeFollower = async ():Promise<Return> => {
   try {
     const route = useRoute();
     const handle = route.params.handle
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'profile/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    }
     const result = await profile_removeFollower(handle as string, profilePage_followStateUpdated)
     if (result.success) {
       return {
@@ -51,12 +72,17 @@ export const profilePage_removeFollower = async ():Promise<Return> => {
         data: true,
       }
     } else {
-      throw 'Follower not removed'
+      throw {
+        message: 'Follower not removed',
+        code: 'profile/follower-not-removed',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
     }
   } catch(error:any) {
-    profile_handleErrors(error)
+    handle_error(error)
     return {
-      error: error,
       success: false,
     }
   }
@@ -65,6 +91,14 @@ export const profilePage_removeFollower = async ():Promise<Return> => {
 
 export const profileList_addFollower = async (handle: string):Promise<Return> => {
   try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'profile/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    }
     const result = await profile_addFollower(handle as string, () => {profileList_followStateUpdated(handle, 'follow')})
     if (result.success) {
       return {
@@ -72,12 +106,17 @@ export const profileList_addFollower = async (handle: string):Promise<Return> =>
         data: true,
       }
     } else {
-      throw 'Follower not added'
+      throw {
+        message: 'Follower not added',
+        code: 'profile/follower-not-added-list',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
     }
   } catch(error:any) {
-    profile_handleErrors(error)
+    handle_error(error)
     return {
-      error: error,
       success: false,
     }
   }
@@ -85,6 +124,14 @@ export const profileList_addFollower = async (handle: string):Promise<Return> =>
 
 export const profileList_removeFollower = async (handle: string):Promise<Return> => {
   try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'profile/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    }
     const result = await profile_removeFollower(handle as string, () => {profileList_followStateUpdated(handle, 'remove')})
     if (result.success) {
       return {
@@ -92,12 +139,84 @@ export const profileList_removeFollower = async (handle: string):Promise<Return>
         data: true,
       }
     } else {
-      throw 'Follower not removed'
+      throw {
+        message: 'Follower not removed',
+        code: 'profile/follower-not-removed-list',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
     }
   } catch(error:any) {
-    profile_handleErrors(error)
+    handle_error(error)
     return {
-      error: error,
+      success: false,
+    }
+  }
+
+}
+
+export const profileList_user_same_addFollower = async (handle: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'profile/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    }
+    const result = await profile_addFollower(handle as string, () => {profileList_user_same_followStateUpdated(handle, 'follow')})
+    if (result.success) {
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Follower not added',
+        code: 'profile/follower-not-added-list',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }
+  } catch(error:any) {
+    handle_error(error)
+    return {
+      success: false,
+    }
+  }
+}
+
+export const profileList_user_same_removeFollower = async (handle: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'profile/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    }
+    const result = await profile_removeFollower(handle as string, () => {profileList_user_same_followStateUpdated(handle, 'remove')})
+    if (result.success) {
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Follower not removed',
+        code: 'profile/follower-not-removed-list',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }
+  } catch(error:any) {
+    handle_error(error)
+    return {
       success: false,
     }
   }
@@ -131,93 +250,96 @@ export const profileList_followStateUpdated = async (handle: string, type: 'foll
   profileStore.changeFollowerState(handle, type);
 }
 
+export const profileList_user_same_followStateUpdated = async (handle: string, type: 'follow'|'remove',):Promise<void> => {
+  const profileStore = useProfileStore();
+  profileStore.changeFollowerStateUserSame(handle, type);
+}
+
+
 const profile_removeFollower = async (handle: string, callback: Function):Promise<Return> => {
   try {
-    if (profile_validRequest()) {
-      const store = useStore();
-      const user = store.getUser;
-      const user_db = store.getUser_db;
+    const store = useStore();
+    const user = store.getUser;
+    const user_db = store.getUser_db;
 
-      if (handle === user_db.user_handle) {
-        throw 'You cannot unfollow yourself'
+    if (handle === user_db.user_handle) {
+      throw {
+        message: 'You cannot unfollow yourself',
+        code: 'profile/unfollow-yourself',
+        severity: 4,
+        type: 'client',
       }
+    }
 
-      const result = await $fetch(`/api/users/user/follow`, {
-        method: 'DELETE',
-        body: {
-          token: await user.getIdToken(),
-          user_handle: handle,
-        }
-      });
-
-      if (result.success) {
-        callback();
-        return {
-          success: true,
-          data: true,
-        }
-      } else {
-        profile_handleErrors(result.error);
-        return {
-          success: false,
-        }
+    const result = await $fetch(`/api/users/user/follow`, {
+      method: 'DELETE',
+      body: {
+        token: await user.getIdToken(),
+        user_handle: handle,
       }
+    });
 
+    if (result.success) {
+      callback();
+      return {
+        success: true,
+        data: true,
+      }
     } else {
-      throw 'User is not signed in'
+      // Error thrown where function is called
+      return {
+        success: false,
+        error: result.error,
+      }
     }
   } catch(error: any) {
+    handle_error(error)
     return {
       success: false,
-      error: error
     }
   }
 }
 
 const profile_addFollower = async (handle: string, callback: Function):Promise<Return> => {
   try {
-    if (profile_validRequest()) {
-      const store = useStore();
-      const user = store.getUser;
-      const user_db = store.getUser_db;
-  
-      if (handle === user_db.user_handle) {
-        throw 'You cannot follow yourself'
+    const store = useStore();
+    const user = store.getUser;
+    const user_db = store.getUser_db;
+
+    if (handle === user_db.user_handle) {
+      throw {
+        message: 'You cannot follow yourself',
+        code: 'profile/unfollow-yourself',
+        severity: 4,
+        type: 'client',
       }
+    }
 
-      const result = await $fetch(`/api/users/user/follow`, {
-        method: 'PUT',
-        body: {
-          token: await user.getIdToken(),
-          user_handle: handle,
-        }
-      });
+    const result = await $fetch(`/api/users/user/follow`, {
+      method: 'PUT',
+      body: {
+        token: await user.getIdToken(),
+        user_handle: handle,
+      }
+    });
 
-      if (result.success) {
-        callback();
-        return {
-          success: true,
-          data: true,
-        }
-      } else {
-        profile_handleErrors(result.error);
-        return {
-          success: false,
-        }
+    if (result.success) {
+      callback();
+      return {
+        success: true,
+        data: true,
       }
     } else {
-      throw 'User is not signed in'
+      // Error thrown where function is called
+      return {
+        success: false,
+        error: result.error,
+      }
     }
   } catch(error: any) {
+    handle_error(error)
     return {
       success: false,
-      error: error
     }
   }
-}
-
-
-
-const profile_handleErrors = (error:any):void => {
-  console.error(error)
 }

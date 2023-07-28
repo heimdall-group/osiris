@@ -1,5 +1,14 @@
 <template>
-  <v-btn v-if="profile.user_same" disabled>Follow</v-btn>
+  <v-btn
+    v-if="profile.user_same"
+    flat
+    :size="state === 'xs' ? 'small' : 'default'"
+    variant="outlined"
+    class="edit-button"
+    :to="`/profile/${user_db.user_handle}/edit`"
+  >
+    Edit
+  </v-btn>
   <profile-buttons-sub-follow 
     v-else-if="!profile.user_followed_by_current_user" 
     :callback="profilePage_addFollower" 
@@ -15,28 +24,40 @@
 </template>
 
 <script lang="ts">
-  import { useViewsStore } from '~/stores/view-state';
+  import { useStore } from '~/stores/main';
   import { useProfileStore } from '~/stores/profile';
+  import { useViewsStore } from '~/stores/view-state';
 
   export default {
   setup() {
-    const viewsStore = useViewsStore();
+    const store = useStore();
     const profileStore = useProfileStore();
+    const viewsStore = useViewsStore();
+
     return {
-      viewsStore,
-      profileStore
+      store,
+      profileStore,
+      viewsStore
     }
   },
   name: 'profileButtonPageFollowComponent',
   data() {
-    return {};
+    return {
+      dialog: false,
+    };
   },
   computed: {
-    state() {
-      return this.viewsStore.getState;
-    },
     profile() {
       return this.profileStore.getProfile;
+    },
+    user() {
+      return this.store.getUser;
+    },
+    user_db() {
+      return this.store.getUser_db;
+    },
+    state() {
+      return this.viewsStore.getState;
     }
   },
   methods: {},

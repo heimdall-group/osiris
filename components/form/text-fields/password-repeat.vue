@@ -1,67 +1,43 @@
+<script setup lang="ts">
+import { useStore } from '~/stores/main';
+import { useVerifyStore } from '~/stores/verify';
+
+  const store = useStore();
+  const verify = useVerifyStore();
+
+  const props = defineProps({
+    'modelValue': {
+      type: String,
+      required: true,
+    },
+    'repeat': {
+      type:  String,
+      required: true,
+    },
+    'disabled': {
+      type: Boolean,
+      required: false,
+    },
+    'loading': {
+      type: Boolean,
+      required: false,
+    }
+  });
+</script>
+
 <template>
   <v-text-field
-    v-model="text"
     :loading="loading"
     label="Repeat Password"
     variant="solo"
+    bg-color="surface-04"
     type="password"
     :disabled="disabled"
     :rules="[
       verify.global_required, 
-      () => {return verify.text_field_pwd_match(pwd_2, pwd_1)}, 
+      () => {return verify.text_field_pwd_match(modelValue, repeat)}, 
       verify.text_field_pwd_length
     ]"
-    @input="onInput"
+    @input="$emit('update:modelValue', $event.target.value)"
   ></v-text-field>
 </template>
-
-<script lang="ts">
-import { useStore } from '~/stores/main';
-import { useVerifyStore } from '~/stores/verify';
-
-export default {
-  setup() {
-    const store = useStore();
-    const verify = useVerifyStore();
-    return {
-      store,
-      verify,
-    };
-  },
-  name: 'formPasswordRepeatComponent',
-  data() {
-    return {
-      text: this.pwd_2,
-    };
-  },
-  methods: {
-    onInput() {
-      this.$emit('onInput', this.text)
-    }
-  },
-  watch: {
-    origin() {
-      this.text = this.pwd_2
-    }
-  },
-  props: {
-    pwd_1: {
-      type: String,
-      required: true,
-    },
-    pwd_2: {
-      type:  String,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      required: false,
-    },
-    loading: {
-      type: Boolean,
-      required: false,
-    }
-  },
-  emits: ['onInput']
-};
-</script>

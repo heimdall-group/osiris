@@ -1,13 +1,16 @@
+<script setup lang="ts">
+  import { Alert } from 'models/alert.model';
+  import { useStore } from '~/stores/main';
+  const store = useStore();
+  const alerts = computed(() => store.getAlerts)
+  const alertCallback = (alert:Alert) => {
+    store.patchAlerts(alert)
+  };
+</script>
+
 <template>
   <client-only>
     <v-row class="ma-0 alert-list" justify="center">
-      <v-col
-        v-if="alerts.length > 1"
-        class="px-4 py-1 alert-button-list-item"
-        cols="12"
-      >
-        <v-btn :ripple="false" position="relative" class="alert-button" color="transparent" flat @click="alert_resetAlert">Clear all</v-btn>    
-      </v-col>
       <v-col
         v-for="(alert, index) in alerts"
         :key="index"
@@ -35,6 +38,12 @@
                 >
                   {{ alert.message.button.text }}
                 </nuxt-link>
+                <a
+                  v-else-if="alert.message.button.type === 'button-title'"
+                  :title="alert.message.button.title"
+                >
+                  {{ alert.message.button.text }}
+                </a>
                 {{ alert.message.append }}
               </span>
               <span v-if="typeof alert.message === 'string'">
@@ -54,6 +63,13 @@
           </v-row>
         </v-alert>
       </v-col>
+      <v-col
+        v-if="alerts.length > 1"
+        class="px-4 py-1 alert-button-list-item"
+        cols="12"
+      >
+        <v-btn :ripple="false" position="relative" class="alert-button" color="transparent" flat @click="alert_resetAlert">Clear all</v-btn>    
+      </v-col>
     </v-row>
   </client-only>
 </template>
@@ -62,10 +78,11 @@
 .alert-list {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
+  margin: 0 auto auto auto;
   z-index: 2000;
   background: transparent;
-  width: 100vw;
+  max-width: 400px;
 }
 
 .alert-list .v-col {
@@ -103,35 +120,3 @@
   cursor: pointer;
 }
 </style>
-
-<script lang="ts">
-import { Alert } from 'models/alert.model';
-import { useStore } from '~/stores/main';
-
-export default {
-  setup() {
-    const store = useStore();
-
-    return {
-      store,
-    };
-  },
-  name: 'alertComponent',
-  data() {
-    return {
-      clear: '',
-    };
-  },
-  computed: {
-    alerts():Array<Alert> {
-      return this.store.getAlerts;
-    },
-  },
-  methods: {
-    alertCallback(alert:Alert) {
-      this.store.patchAlerts(alert)
-    },
-  },
-  mounted() {},
-};
-</script>

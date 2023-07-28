@@ -1,61 +1,35 @@
+<script setup lang="ts">
+  import { useStore } from '~/stores/main';
+  import { useVerifyStore } from '~/stores/verify';
+
+  const store = useStore();
+  const verify = useVerifyStore();
+  const props = defineProps({
+    'modelValue': String,
+    'disabled': {
+      type: Boolean,
+      required: false,
+    },
+    'loading': {
+      type: Boolean,
+      required: false,
+    }
+  })
+  const emist = defineEmits(['update:modelValue'])
+</script>
+
 <template>
   <v-text-field
-    v-model="displayName"
     :loading="loading"
     label="Your name"
     variant="solo"
+    bg-color="surface-04"
     type="text"
     :disabled="disabled"
     :rules="[
       verify.global_required
     ]"
-    @input="onInput"
+    @input="$emit('update:modelValue', $event.target.value)"
   ></v-text-field>
+  {{ modelValue }}
 </template>
-
-<script lang="ts">
-import { useStore } from '~/stores/main';
-import { useVerifyStore } from '~/stores/verify';
-
-export default {
-  setup() {
-    const store = useStore();
-    const verify = useVerifyStore();
-    return {
-      store,
-      verify,
-    };
-  },
-  name: 'formDisplayNameComponent',
-  data() {
-    return {
-      displayName: this.origin,
-    };
-  },
-  methods: {
-    onInput() {
-      this.$emit('onInput', this.displayName)
-    }
-  },
-  watch: {
-    origin() {
-      this.displayName = this.origin
-    }
-  },
-  props: {
-    origin: {
-      type: String,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      required: false,
-    },
-    loading: {
-      type: Boolean,
-      required: false,
-    }
-  },
-  emits: ['onInput']
-};
-</script>

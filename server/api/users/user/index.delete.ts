@@ -1,7 +1,8 @@
 import { getAuth } from 'firebase-admin/auth';
 import Users from "~/server/models/users";
+import { Return_Api } from 'models/return.model';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event):Promise<Return_Api> => {
   const { token } = await readBody(event);
   const result = await getAuth().verifyIdToken(token);
   try {
@@ -17,14 +18,21 @@ export default defineEventHandler(async (event) => {
         data: false,
         success: false,
         message: 'User not authenticated',
+        server_message: {
+          request_endpoint: 'users/user/profile',
+          request_type: 'DELETE',
+        },
       }
     } 
-  } catch (err) {
-    console.log(err)
+  } catch (error: any) {
     return {
       data: false,
       success: false,
-      message: 'users/user/profile/delete',
+      error: error,
+      server_message: {
+        request_endpoint: 'users/user/profile',
+        request_type: 'DELETE',
+      },
     }
   }
  })

@@ -1,8 +1,8 @@
-import { Return } from 'models/return.model';
 import { getAuth } from 'firebase-admin/auth';
 import Users from "~/server/models/users";
+import { Return_Api } from 'models/return.model';
 
-export default defineEventHandler(async (event):Promise<Return> => {
+export default defineEventHandler(async (event):Promise<Return_Api> => {
   try {
     if (event.context.params === undefined) {
       throw 'Missing parameters';
@@ -43,12 +43,14 @@ export default defineEventHandler(async (event):Promise<Return> => {
       data: true,
       success: true,
     }
-  } catch (err: any) {
-    console.log(err)
+  } catch (error: any) {
     return {
-      error: err,
+      error: error,
       success: false,
-      message: 'users/user/friendshop/put',
+      server_message: {
+        request_endpoint: 'users/user/block',
+        request_type: 'DELETE',
+      },
     }
   }
  });

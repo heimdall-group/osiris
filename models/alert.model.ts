@@ -15,7 +15,12 @@ export interface Alert {
               type: 'button-callback';
               callback: Function;
               text: string;
+            }
+          | {
+              type: 'button-title';
+              title: string,
+              text: string;
             };
         append: string;
-      };
+      }
 }

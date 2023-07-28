@@ -1,8 +1,9 @@
 import { getAuth } from 'firebase-admin/auth';
 import Users from "~/server/models/users";
 import { hashName } from '~/server/functions';
+import { Return_Api } from 'models/return.model';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event):Promise<Return_Api> => {
   try {
     let { token, handle, email, } = await readBody(event);
 
@@ -37,7 +38,10 @@ export default defineEventHandler(async (event) => {
       user_programs: [],
       user_avatar: result.photoUrl || config.default_profile_avatar_url,
       user_verified: false,
-      user_description: 'Standard description',
+      user_description: {
+        text: 'Standard Description',
+        links: [],
+      },
       user_created_at: new Date().getTime(),
     })
     document.save()
@@ -45,11 +49,14 @@ export default defineEventHandler(async (event) => {
       data: true,
       success: true,
     }
-  } catch(error) {
+  } catch(error: any) {
     return {
       error: error,
       success: false,
-      message: 'users/register/post',
+      server_message: {
+        request_endpoint: 'users/register',
+        request_type: 'POST',
+      },
     }
   }
  })

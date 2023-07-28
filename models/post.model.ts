@@ -1,24 +1,28 @@
 import { ObjectId } from "mongoose"
-import { Pagnation } from "./pagnation.model"
 
 export interface Likes {
   likes: Array<Like>,
-  pagnation: Pagnation,
+  skip_amount: number,
 }
 
 export interface Comments {
   comments: Array<Comment>,
-  pagnation: Pagnation,
+  skip_amount: number,
 }
 
 export interface Replies {
   replies: Array<Reply>,
-  pagnation: Pagnation,
+  skip_amount: number,
 }
 
 export interface Posts {
   posts: Array<Post>,
-  pagnation: Pagnation,
+  skip_amount: number,
+}
+
+export interface Posts_Unpublished {
+  posts: Array<Post_Unpublished>,
+  skip_amount: number,
 }
 
 export interface Like {
@@ -29,7 +33,7 @@ export interface Like {
 }
 
 export interface Comment {
-  post_id: ObjectId,
+  post_id?: ObjectId,
   comment_id: ObjectId,
   uid: String,
   text: String,
@@ -52,23 +56,26 @@ export interface Reply {
 
 export interface Post {
   post_id: ObjectId,
-  uid: String,
   user: {
     verified: boolean,
     handle: String,
-    displayname: String,
     avatar_url: String,
   },
-  liked: boolean,
-  likes: Array<Likes>,
-  comments: Array<Comments>,
-  urls: Array<{
-    url: String,
-    type: String,
-  }>,
+  liked_by_current_user: boolean,
+  likes: Likes,
+  comments: Comments,
+  urls: Array<string>,
   likes_total: Number,
   comments_total: Number,
   caption: String,
-  users_tagged: Array<String>
+  users_tagged: Array<String>,
+  created_at: Number,
+}
+
+export interface Post_Unpublished {
+  post_id: ObjectId,
+  urls: Array<string>,
+  caption: String,
+  users_tagged: Array<String>,
   created_at: Number,
 }

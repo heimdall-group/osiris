@@ -1,3 +1,16 @@
+<script setup lang="ts">
+  import { useStore } from '~/stores/main';
+  import { useViewsStore } from '~/stores/view-state';
+
+  const store = useStore();
+  const viewsStore = useViewsStore();
+  const drawer = ref(false);
+
+  const user_db = computed(() => store.getUser_db)
+  const user = computed(() => store.getUser)
+  const state = computed(() => viewsStore.getState)
+</script>
+
 <template>
   <v-toolbar
     color="transparent"
@@ -20,6 +33,7 @@
             <v-btn flat rounded="lg" class="mx-1" to="/signup">Sign up</v-btn>
           </v-col>
           <v-col class="ma-0" v-else>
+            <posts-create />
             <v-btn flat rounded="lg" class="mx-1" to="/">Your Feed</v-btn>
             <v-btn flat rounded="lg" class="mx-1" :to="`/profile/${user_db.user_handle}`">Your Profile</v-btn>
             <v-btn flat rounded="lg" class="mx-1" @click="firebase_destroyAuth">Sign out</v-btn>
@@ -40,6 +54,7 @@
       <v-list-item><v-btn flat block rounded="lg" to="/signup">Sign up</v-btn></v-list-item>
     </v-list>
     <v-list v-if="(state === 'xs' || state === 'sm') && Object.keys(user).length !== 0">
+      <v-list-item><posts-create block /></v-list-item>
       <v-list-item><v-btn flat block rounded="lg" to="/">Your Feed</v-btn></v-list-item>
       <v-list-item><v-btn flat block rounded="lg" :to="`/profile/${user_db.user_handle}`">Your Profile</v-btn></v-list-item>
       <v-list-item><v-btn flat block rounded="lg" @click="firebase_destroyAuth">Sign out</v-btn></v-list-item>
@@ -73,43 +88,4 @@
 .navigation-bar .fa-right-from-bracket {
   margin: 0 0 0 0;
 }
-
 </style>
-
-<script lang="ts">
-import { useStore } from '~/stores/main';
-import { useViewsStore } from '~/stores/view-state';
-
-export default {
-  async setup() {
-    const store = useStore();
-    const viewsStore = useViewsStore();
-    return {
-      store,
-      viewsStore
-    };
-  },
-  name: 'headerComponent',
-  data() {
-    return {
-      drawer: false,
-    };
-  },
-  computed: {
-    user_db() {
-      return this.store.getUser_db;
-    },
-    user() {
-      return this.store.getUser;
-    },
-    state() {
-      return this.viewsStore.getState;
-    }
-  },
-  methods: {},
-  mounted() {},
-  updated() {},
-  components: {},
-  emits: [],
-};
-</script>

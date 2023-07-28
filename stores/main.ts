@@ -10,8 +10,8 @@ export const useStore = defineStore('main', {
       user: {} as User,
       user_db: {} as User_db,
       alerts: new Array<Alert>,
-      sign_in_alert: false as Boolean,
-      global_loading: true as Boolean,
+      sign_in_alert: false as boolean,
+      global_loading: true as boolean,
     };
   },
   getters: {
@@ -24,10 +24,10 @@ export const useStore = defineStore('main', {
     getAlerts():Array<Alert> {
       return this.alerts;
     },
-    getSignInAlert():Boolean {
+    getSignInAlert():boolean {
       return this.sign_in_alert;
     },
-    getGlobalLoading():Boolean {
+    getGlobalLoading():boolean {
       return this.global_loading
     },
   },
@@ -51,10 +51,9 @@ export const useStore = defineStore('main', {
       this.alerts = [];
     },
     setSignInAlert(sign_in_alert:boolean):void {
-      console.log('SetSignInAlert')
       this.sign_in_alert = sign_in_alert;
     },
-    setGlobalLoading(loading:Boolean):void {
+    setGlobalLoading(loading:boolean):void {
       this.global_loading = loading;
     },
   },

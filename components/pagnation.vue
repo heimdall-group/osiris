@@ -1,3 +1,32 @@
+<script setup lang="ts">
+  const props = defineProps({
+    loading: {
+      type: Boolean,
+      required: true,
+    },
+    size: {
+      type: Number,
+      required: true,
+    },
+    width: {
+      type: Number,
+      required: true,
+    },
+    bottom: {
+      type: String,
+      required: true,
+    },
+  });
+
+  const emits = defineEmits(['intersectionHandler'])
+
+  const observerHandler = (entries:any) => {
+    if (entries) {
+      emits('intersectionHandler')
+    }
+  };
+</script>
+
 <template>
   <v-row class="ma-0" no-gutters>
     <slot></slot>
@@ -21,7 +50,6 @@
 </template>
 
 <style scoped>
-
 .loading-col {
   position: relative;
   height: 35px;
@@ -38,49 +66,3 @@
   z-index: 2500;
 }
 </style>
-
-<script lang="ts">
-  export default {
-  setup() {
-
-    return {
-
-    }
-  },
-  name: 'pagnationComponent',
-  data() {
-    return {};
-  },
-  props: {
-    loading: {
-      type: Boolean,
-      required: true,
-    },
-    size: {
-      type: Number,
-      required: true,
-    },
-    width: {
-      type: Number,
-      required: true,
-    },
-    bottom: {
-      type: String,
-      required: true,
-    },
-  },
-  computed: {},
-  methods: {
-    observerHandler(entries:any) {
-      if (entries) {
-        this.$emit('intersectionHandler')
-      }
-    },
-  },
-  mounted() {
-  },
-  updated() {},
-  components: {},
-  emits: ['intersectionHandler'],
-  };
-</script>

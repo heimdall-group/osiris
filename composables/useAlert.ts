@@ -181,20 +181,54 @@ export const alert_accountRemoved = () => {
   })
 };
 
-export const alert_firebase_defaultStatus = (code: String) => {
+export const alert_handle_error_1 = (error: string) => {
+  const store = useStore();
+  store.setAlert({
+    type: 'error',
+    icon: 'fa-solid fa-circle-info',
+    message: {
+      prepend: 'An ',
+      button: {
+        type: 'button-title',
+        title: error,
+        text: 'error'
+      },
+      append: ' has accured. We have recived an error report and will investigate',
+    }
+  });
+};
+
+export const alert_handle_error_2 = (error: string) => {
+  const store = useStore();
+  store.setAlert({
+    type: 'error',
+    icon: 'fa-solid fa-circle-info',
+    message: {
+      prepend: 'An ',
+      button: {
+        type: 'button-title',
+        title: error,
+        text: 'error'
+      },
+      append: ' has accured.',
+    }
+  });
+};
+
+export const alert_handle_error_3 = (error: string) => {
   const store = useStore();
   store.setAlert({
     type: 'warning',
     icon: 'fa-solid fa-circle-info',
     message: {
-      prepend: 'An unhandled error has accured. Please ',
+      prepend: 'An ',
       button: {
-        type: 'button-link',
-        to: '/support',
-        text: 'contact support',
+        type: 'button-title',
+        title: error,
+        text: 'error'
       },
-      append: ` and provide code: ${code}`,
-    },
+      append: ' has accured.',
+    }
   });
 };
 

@@ -10,7 +10,6 @@ import {
   signOut,
   updateProfile,
   User,
-  AdditionalUserInfo,
   UserCredential,
 } from 'firebase/auth';
 import { User_db } from 'models/user_db.model';
@@ -55,7 +54,7 @@ export const firebase_password_createUser: Function = async (
       success: true,
     };
   } catch (error:any) {
-    firebase_handleError(error);
+    firebase_handle_error(error);
     return {
       error: error,
       success: false,
@@ -73,7 +72,7 @@ export const firebase_password_signInUser: Function = async (email: string, pass
       success: true,
     };
   } catch (error:any) {
-    firebase_handleError(error);
+    firebase_handle_error(error);
     return {
       error: error,
       success: false,
@@ -97,20 +96,22 @@ export const firebase_getRedirectResults: Function = async (result:UserCredentia
     if (additionalUserInfo === null) {
       throw {
         code: 'auth/additional-user-info-null',
-        message: 'Internal: Additional user info is null'
+        message: 'Internal: Additional user info is null',
+        severity: 1,
+        type: 'client',
       }
     }
     if (additionalUserInfo.isNewUser) {
-      firebase_newUser(user, user.displayName);
+      firebase_newUser(user, user.displayName, true);
     } else {
-      firebase_existingUser(user, 'getRedirectResult');
+      firebase_existingUser(user, true);
     }
   } catch (error:any) {
-    firebase_handleError(error);
+    firebase_handle_error(error);
   }
 };
 
-export const firebase_newUser: Function = async (user: User, handle: string):Promise<Return> => {
+export const firebase_newUser: Function = async (user: User, handle: string, redirect?: boolean):Promise<Return> => {
   try {
     const store = useStore();
     const router = useRouter();
@@ -134,6 +135,9 @@ export const firebase_newUser: Function = async (user: User, handle: string):Pro
           alert_verifyEmail();
         }
         alert_registerSuccess();
+        if (redirect) {
+          router.push('/')
+        }
         return {
           data: true,
           success: true
@@ -142,17 +146,20 @@ export const firebase_newUser: Function = async (user: User, handle: string):Pro
         throw {
           code: 'auth/user_db-fetch-failed',
           message: 'User_db fetch failed',
+          severity: 1,
+          type: 'client',
         }
       }
-    }
-    else {
+    } else {
       throw {
         code: 'auth/user-registration-failed',
         message: 'User registration failed',
+        severity: 1,
+        type: 'client',
       }
     }
   } catch (error:any) {
-    firebase_handleError(error);
+    firebase_handle_error(error);
     return {
       error: error,
       success: false,
@@ -160,7 +167,7 @@ export const firebase_newUser: Function = async (user: User, handle: string):Pro
   }
 }
 
-export const firebase_existingUser: Function = async (user:User):Promise<Return> => {
+export const firebase_existingUser: Function = async (user:User, redirect?: boolean):Promise<Return> => {
   try {
     const store = useStore();
     const router = useRouter();
@@ -175,6 +182,9 @@ export const firebase_existingUser: Function = async (user:User):Promise<Return>
         alert_verifyEmail();
       }
       alert_loginSuccess();
+      if (redirect) {
+        router.push('/')
+      }
       return {
         data: true,
         success: true,
@@ -183,10 +193,12 @@ export const firebase_existingUser: Function = async (user:User):Promise<Return>
       throw {
         code: 'auth/user_db-fetch-failed',
         message: 'User_db fetch failed',
+        severity: 1,
+        type: 'client',
       }
     }
   } catch (error:any) {
-    firebase_handleError(error);
+    firebase_handle_error(error);
     return {
       error: error,
       success: false,
@@ -206,49 +218,6 @@ export const firebase_destroyAuth: Function = async ():Promise<void> => {
       alert_signoutSuccess();
     })
     .catch((error) => {
-      firebase_handleError(error);
+      firebase_handle_error(error);
     });
 }
-
-export const firebase_handleError: Function = (error: any):void => {
-  const { code } = error;
-  console.error(error)
-  switch (code) {
-    case 'auth/weak-password':
-      alert_firebase_weakPassword();
-      break;
-    case 'auth/wrong-password':
-      alert_firebase_wrongPassword();
-      break;
-    case 'auth/email-already-in-use':
-      alert_firebase_emailAlreadyInUse();
-      break;
-    case 'auth/popup-closed-by-user':
-      alert_firebase_popupClosedByUser();
-      break;
-    case 'auth/popup-blocked':
-      alert_firebase_popupBlocked();
-      break;
-    case 'auth/popup-request-cancelled':
-      alert_firebase_popupRequestCancelled();
-      break;
-    case 'auth/user-not-found':
-      alert_firebase_userNotFound();
-      break;
-    case 'auth/user-disabled':
-      alert_firebase_userDisabled();
-      break;
-    case 'auth/user-mismatch':
-      alert_firebase_userMismatch();
-      break;
-    case 'auth/result-null': 
-      break;
-    case 'auth/additional-user-info-null':
-      break;
-    case 'auth/user-registration-failed':
-      break;
-    default:
-      alert_firebase_defaultStatus(code);
-      break;
-  }
-};

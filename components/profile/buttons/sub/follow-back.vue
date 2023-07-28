@@ -2,9 +2,10 @@
   <v-btn
     flat
     :size="state === 'xs' ? 'small' : 'default'"
-    variant="text"
+    variant="outlined"
     :loading="loading"
     @click="clickHandler"
+    class="follow-back-button"
     title="Follow this user back"
   >
     Follow back

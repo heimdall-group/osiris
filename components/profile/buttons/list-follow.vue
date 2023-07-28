@@ -1,15 +1,15 @@
 <template>
-  <v-btn v-if="profile.user_same" disabled>Follow</v-btn>
+  <v-btn v-if="follow.user_same" disabled>Follow</v-btn>
   <profile-buttons-sub-follow 
-    v-else-if="!profile.user_followed_by_current_user" 
+    v-else-if="!follow.user_followed_by_current_user" 
     :callback="() => {profileList_addFollower(handle)}" 
   />
   <profile-buttons-sub-follow-back 
-    v-else-if="!profile.user_follow_back_by_current_user" 
+    v-else-if="!follow.user_follow_back_by_current_user" 
     :callback="() => {profileList_addFollower(handle)}" 
   />
   <profile-buttons-sub-remove 
-    v-else-if="profile.user_followed_by_current_user" 
+    v-else-if="follow.user_followed_by_current_user" 
     :callback="() => {profileList_removeFollower(handle)}" 
   />
 </template>
@@ -29,12 +29,11 @@
       type: String,
       required: true,
     },
-    profile: {
+    follow: {
       type: Object,
       required: true,
     },
   },
-  computed: {},
   methods: {},
   mounted() {},
   updated() {},

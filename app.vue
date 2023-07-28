@@ -8,7 +8,8 @@
     <navigation />
     <overlay-sign-in />
     <NuxtPage />
-    <!-- <overlay-alert /> -->
+    <overlay-alert />
+    <overlay-upload />
   </v-app>
 </template>
 
@@ -18,6 +19,7 @@
 @import url(~/assets/css/animations.css);
 @import url(~/assets/css/cursors.css);
 @import url(~/assets/css/selects.css);
+@import url(~/assets/css/texts.css);
 
 * {
   font-family: 'Quicksand-Regular';
@@ -25,8 +27,12 @@
 }
 
 html {
-  overflow-y: overlay;
+  overflow: overlay;
   touch-action: manipulation;
+}
+
+body {
+  overflow: overlay;
 }
 
 .v-overlay__scrim {
@@ -34,10 +40,35 @@ html {
 }
 
 .mdi-check-decagram {
-  color: #429aff;
+  color: rgb(var(--v-theme-verified));
+}
+
+.follow-button {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+}
+
+.follow-back-button {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+}
+
+.remove-follow-button {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+}
+
+.edit-button {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+}
+
+.v-btn .fa-solid,
+.v-btn .fa-regular {
+  font-size: 0.875rem;
 }
 
 /* Scroll */
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
 
 *::-webkit-scrollbar {
   width: 9px;

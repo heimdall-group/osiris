@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
   <v-container fluid>
     <v-row>
@@ -10,23 +12,3 @@
     </v-row>
   </v-container>
 </template>
-
-<script lang="ts">
-
-export default {
-  async setup() {
-    return {
-    };
-  },
-  name: 'signupComponent',
-  data() {
-    return {};
-  },
-  computed: {},
-  methods: {},
-  mounted() {},
-  updated() {},
-  components: {},
-  emits: [],
-};
-</script>

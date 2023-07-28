@@ -1,16 +1,8 @@
 export interface Upload{
   upload_id: string,
   uid: string,
-  upload_items: Array<{
-    name: string,
-    data: {
-      1080: {
-        current_fps: number,
-        timemark: string,
-      }
-    }
-  }>,
   completed: Boolean,
+  error: Boolean,
   options: Upload_Options,
 }
 
@@ -21,4 +13,5 @@ export interface Upload_Options{
   },
   autopublish: boolean,
   caption: string,
+  users_tagged: Array<string>,
 }
