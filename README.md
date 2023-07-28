@@ -37,6 +37,8 @@ S3_BUCKET_NAME = 'heimdall-osiris'
 S3_BUCKET_ENDPOINT = 'https://s3.eu-central-2.wasabisys.com/heimdall-osiris/'
 # Resolutions ex 1080x1920. Separated by a space
 COMPRESSION_TYPES = '1080x1920'
+# The video codec used by ffmpeg
+VIDEO_CODEC = 'h264_nvenc'
 
 # Client
 
