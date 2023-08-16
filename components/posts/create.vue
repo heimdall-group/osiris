@@ -34,7 +34,6 @@
   })
 
   const resetDialog = () => {
-    console.log('resetDialog')
     dialog.value = false;
     state.value = 1;
     state_class.value = 'state-1';
@@ -130,7 +129,7 @@
             <v-row class="ma-0 flex-nowrap">
               <v-col
                 v-for="(src, index) in srcs"
-                :key="index"
+                :key="`posts-create-${index}`"
                 class="pa-0"
               >
                 <v-img :src="src"></v-img>

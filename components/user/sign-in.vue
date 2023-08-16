@@ -23,11 +23,11 @@
     <v-card width="600px" class="pa-4" rounded="lg">
       <v-card-title class="text-center"> Sign in </v-card-title>
       <v-form validate-on="lazy" v-model="validation" @submit="submitHandler">
-        <form-text-fields-email 
+        <text-fields-email 
           v-model="email"
           :validate="false"
         />
-        <form-text-fields-password 
+        <text-fields-password 
           v-model="pwd"
         />
         <v-btn

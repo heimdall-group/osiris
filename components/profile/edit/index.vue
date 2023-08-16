@@ -13,10 +13,12 @@
   const route = useRoute();
   const handle = route.params.handle;
 
+  const dialog = ref(false);
   const user = computed(() => store.getUser)
   const user_db = computed(() => store.getUser_db)
   const profile_edit = computed(() => profileStore.getProfile_edit)
-  const posts = computed(() => postsStore.getPosts)
+  const state = computed(() => viewsStore.getState)
+  postsStore.resetUnpublishedPosts();
 
   if (Object.keys(user.value).length === 0) {
     router.push(`/profile/${handle}`);
@@ -37,7 +39,6 @@
     if (data?.success) {
       profileStore.setProfileEdit(data.data)
     } else if (data?.success === false) {
-      console.log('Push from watch');
       router.push(`/profile/${handle}`)
       handle_error({
         message: 'Fetch failed',
@@ -52,11 +53,9 @@
   onMounted(() => {
     if (Object.keys(profile_edit.value).length === 0) {
       const result: any = data;
-      console.log(data)
       if (result?.success) {
         profileStore.setProfileEdit(result.data as Profile_Edit);
       } else if (result?.success === false) {
-        console.log('Push from mount');
         router.push(`/profile/${handle}`)
         handle_error({
           message: 'Fetch failed',
@@ -82,6 +81,7 @@
           xxl="6"
           class="pa-0"
         >
+          {{ state }}
           <v-row class="ma-0">
             <profile-edit-info />
             <profile-edit-unpublished-posts />
@@ -92,19 +92,48 @@
         location="bottom"
         rounded="lg"
       >
-        <v-btn
-          :to="`/profile/${user_db.user_handle}`"
-          prepend-icon="fa-solid fa-arrow-left"
+        <v-dialog
+          v-model="dialog"
+          width="auto"
+          transition="dialog-bottom-transition"
+          :persistent="true"
         >
-          Back to profile
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="success"
-          variant="outlined"
-        >
-          Save
-        </v-btn>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              prepend-icon="fa-solid fa-arrow-left"
+              @click="dialog = !dialog"
+            >
+              Back to profile
+            </v-btn>
+          </template>
+          <v-card
+            class="pa-3"
+          >
+            <v-card-title class="text-center">
+              Your about to leave this page
+            </v-card-title>
+            <v-card-text class="text-center">
+              Any unsaved changes will be discarded
+            </v-card-text>
+            <v-row class="ma-0 mt-3" justify="space-around">
+              <v-btn
+                @click="dialog = !dialog"
+                color="error"
+                variant="outlined"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                :to="`/profile/${user_db.user_handle}`"
+                @click="dialog = !dialog"
+                color="success"
+                variant="outlined"
+              >
+                Continue
+              </v-btn>              
+            </v-row>
+          </v-card>
+        </v-dialog>
       </v-app-bar>
     </v-container>
   

@@ -18,7 +18,7 @@
     >
       <v-col
         v-for="(key) in lines"
-        :key="key"
+        :key="`loading-container-${key}`"
         cols="12"
         class="loader"
       ></v-col>

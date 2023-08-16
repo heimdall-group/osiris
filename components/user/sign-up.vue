@@ -27,21 +27,21 @@
     <v-card width="600px" class="pa-4" rounded="lg">
       <v-card-title class="text-center"> Sign Up </v-card-title>
       <v-form validate-on="lazy" v-model="validation" @submit="submitHandler">
-        <form-text-fields-email
+        <text-fields-handle
+          v-model="handle"
+        />
+        <text-fields-display-name 
+          v-model="displayName"
+        />
+        <text-fields-email
           v-model="email"
           validate
         />
-        <form-text-fields-handle
-          v-model="handle"
-        />
-        <form-text-fields-display-name 
-          v-model="displayName"
-        />
         {{ displayName }}
-        <form-text-fields-password 
+        <text-fields-password 
           v-model="pwd"
         />
-        <form-text-fields-password-repeat
+        <text-fields-password-repeat
           v-model="pwdRepeat"
           :repeat="pwd"
         />

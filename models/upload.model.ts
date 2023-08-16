@@ -1,8 +1,8 @@
 export interface Upload{
   upload_id: string,
   uid: string,
-  completed: Boolean,
-  error: Boolean,
+  completed: boolean,
+  error: boolean,
   options: Upload_Options,
 }
 

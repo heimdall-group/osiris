@@ -63,16 +63,18 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       { $limit: skip + limit },
       {
         $project: {
+          _id : 0 ,
           post_id: "$posts._id",
           user: {
             verified: "$user_verified",
             handle:  "$user_handle",
             avatar_url:  "$user_avatar",
           },
+          post_by_current_user: { $eq: [ "$posts.uid", result.uid ] },
           liked_by_current_user: { $cond: [result !== undefined, { $in: [result.uid, "$posts.likes"] }, false]},
           urls: "$posts.urls",
-          likes_total: { $size: "$posts.likes" },
-          comments_total: { $size: "$posts.comments" },
+          likes_count: { $size: "$posts.likes" },
+          comments_count: { $size: "$posts.comments" },
           caption: "$posts.caption",
           users_tagged: "$posts.users_tagged",
           created_at: "$posts.created_at",
@@ -97,10 +99,14 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       index.likes = {
         likes: [],
         skip_amount: 0,
+        likes_false: true,
+        likes_loading: true,
       }
       index.comments = {
         comments: [],
         skip_amount: 0,
+        comments_false: true,
+        comments_loading: true,
       }
     }
 

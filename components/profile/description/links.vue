@@ -2,7 +2,7 @@
   <v-row class="ma-0">
     <v-col
       v-for="(link, index) in profile.user_description.links"
-      :key="index"
+      :key="`profile-description-${index}`"
       class="pa-0"
       cols="auto"
       sm="auto"

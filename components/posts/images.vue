@@ -33,8 +33,9 @@
       ></v-btn>
     </template>
     <v-carousel-item
-      v-for="url in urls"
-      :src="url.url"
+      v-for="(url, index) in urls"
+      :key="`posts-images-${index}`"
+      :src="url"
     >
     </v-carousel-item>
   </v-carousel>
@@ -44,10 +45,11 @@
       :show-arrows="false"
       class="posts-slideshow"
     >
-      <v-carousel-item
-        v-for="url in urls"
-        :src="url.url"
-      >
+    <v-carousel-item
+      v-for="(url, index) in urls"
+      :key="`posts-images-${index}`"
+      :src="url"
+    >
       </v-carousel-item>
     </v-carousel>
 </template>

@@ -33,7 +33,7 @@
         <v-list-item
           class="px-4 py-1"
           v-for="(upload, index) in uploads"
-          :key="index"
+          :key="`overlay-upload-${index}`"
         >
           <v-card
             width="100%"

@@ -18,12 +18,20 @@
 </script>
 
 <template>
-  <v-card-text>
-    {{ post.post_id }}<br>
-    {{ post.urls }}<br>
-    {{ post.caption }}<br>
-    {{ post.users_tagged }}<br>
-    {{ post.created_at }}<br>
-  </v-card-text>
-  <v-btn @click="publishHandler" :loading="loading">Publish</v-btn>
+  <v-col
+    cols="6"
+    sm="6"
+    md="6"
+    lg="4"
+    xl="4"
+    xxl="4"
+  >
+    <v-card-text>
+      {{ post.post_id }}<br>
+      {{ post.caption }}<br>
+      {{ post.users_tagged }}<br>
+      {{ post.created_at }}<br>
+    </v-card-text>
+    <v-btn @click="publishHandler" :loading="loading">Publish</v-btn>
+  </v-col>
 </template>

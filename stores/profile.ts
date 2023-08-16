@@ -1,9 +1,8 @@
-import { defineStore } from 'pinia';
 import { Profile, Profile_Description, Profile_Edit, Profile_Follow, Profile_Followers, Profile_Following } from 'models/profile.model';
-import { Return_Followers, Return_Following, Return_Posts, Return_Unpublished_Posts } from 'models/return.model';
+import { Return_Followers, Return_Following, } from 'models/return.model';
 import { useStore } from '~/stores/main';
 import { getAuth } from 'firebase/auth';
-import { Post, Post_Unpublished, Posts, Posts_Unpublished } from 'models/post.model';
+import { User_db } from 'models/user_db.model';
 
 export const useProfileStore = defineStore('profile', {
   state: () => {
@@ -115,7 +114,7 @@ export const useProfileStore = defineStore('profile', {
         }
 
         store.setUser(user)
-        store.setUser_db({user_handle: handle, user_avatar: user_db.user_avatar});
+        store.setUser_db({user_handle: handle, user_avatar: user_db.user_avatar} as User_db);
         this.profile.user_description.text = description.text;
         this.profile.user_description.links = [...description.links];         
       } catch(error) {
@@ -126,17 +125,17 @@ export const useProfileStore = defineStore('profile', {
       const followers_index = this.followers.followers.find((item) => item.user_handle === handle)
       if (followers_index) {
         if (type === 'follow') {
-          followers_index.user_follow_back_by_current_user = true;
+          followers_index.current_user_follows = true;
         } else if (type === 'remove') {
-          followers_index.user_follow_back_by_current_user = false;
+          followers_index.current_user_follows = false;
         }
       }
       const following_index = this.following.following.find((item) => item.user_handle === handle)
       if (following_index) {
         if (type === 'follow') {
-          following_index.user_follow_back_by_current_user = true;
+          following_index.current_user_follows = true;
         } else if (type === 'remove') {
-          following_index.user_follow_back_by_current_user = false;
+          following_index.current_user_follows = false;
         }
       }
     },
@@ -144,17 +143,17 @@ export const useProfileStore = defineStore('profile', {
       const followers_index = this.followers.followers.find((item) => item.user_handle === handle)
       if (followers_index) {
         if (type === 'follow') {
-          followers_index.user_follow_back_by_current_user = true;
+          followers_index.current_user_follows = true;
           this.resetFollowing();
         } else if (type === 'remove') {
-          followers_index.user_follow_back_by_current_user = false;
+          followers_index.current_user_follows = false;
         }
       }
 
       const following_index = this.following.following.find((item) => item.user_handle === handle)
       if (following_index) {
         if (type === 'follow') {
-          following_index.user_follow_back_by_current_user = true;
+          following_index.current_user_follows = true;
         } else if (type === 'remove') {
           const index = this.following.following.indexOf(following_index);
           this.following.following.splice(index, 1)
@@ -167,8 +166,14 @@ export const useProfileStore = defineStore('profile', {
         this.profile.user_following_count--
       }
     },
+    decrementProfilePostsCount() {
+      this.profile.user_posts_count--
+    },
     resetProfile() {
       this.profile = {} as Profile;
+    },
+    resetProfileEdit() {
+      this.profile_edit = {} as Profile_Edit;
     },
     resetFollowers() {
       this.followers = {

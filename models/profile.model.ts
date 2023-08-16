@@ -18,8 +18,8 @@ export interface Profile {
   user_verified: boolean,
   user_displayName: string,
   user_description: Profile_Description,
-  user_followed_by_current_user: boolean,
-  user_follow_back_by_current_user: boolean,
+  current_user_followed: boolean,
+  current_user_follows: boolean,
   user_same: boolean,
   current_user_blocked: boolean,
 }
@@ -30,14 +30,14 @@ export interface Profile_Edit {
   user_avatar: string,
   user_verified: boolean,
   user_displayName: string,
-  user_unpublished_posts_count: string,
+  user_unpublished_posts_count: number,
   user_description: Profile_Description,
 }
 
 export interface Profile_Follow {
   user_avatar: string;
-  user_follow_back_by_current_user: boolean;
-  user_followed_by_current_user: boolean;
+  current_user_follows: boolean;
+  current_user_followed: boolean;
   user_handle: string;
   user_same: boolean;
   user_verified: boolean;

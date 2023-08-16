@@ -13,7 +13,7 @@
     <v-row class="ma-0 alert-list" justify="center">
       <v-col
         v-for="(alert, index) in alerts"
-        :key="index"
+        :key="`overlay-alert-${index}`"
         cols="12"
         class="pa-1"
       >

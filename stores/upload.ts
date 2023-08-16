@@ -1,5 +1,4 @@
 import { Upload } from 'models/upload.model';
-import { defineStore } from 'pinia';
 
 export const useUploadStore = defineStore('upload', {
   state: () => {

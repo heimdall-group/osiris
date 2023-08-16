@@ -17,7 +17,7 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       return {
         data: false,
         success: false,
-        message: 'User not authenticated',
+        message: 'User not signed in',
         server_message: {
           request_endpoint: 'users/user/profile',
           request_type: 'DELETE',

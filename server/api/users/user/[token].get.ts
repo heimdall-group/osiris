@@ -24,6 +24,7 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       data: {
         user_handle: document.user_handle,
         user_avatar: document.user_avatar,
+        user_verified: document.user_verified,
       },
       success: true,
     }

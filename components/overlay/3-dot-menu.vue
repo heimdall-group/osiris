@@ -2,18 +2,18 @@
 import { useProfileStore } from '~/stores/profile';
 const profileStore = useProfileStore();
 const props = defineProps({
-  profile_prop: {
-    type: Object,
+  identifier: {
+    type: String,
     required: true,
   }
 })
 </script>
 
 <template>
-  <v-menu location="end">
+  <v-menu location="end" :close-on-content-click="false">
     <template v-slot:activator="{ props }">
       <v-btn
-        variant="text"
+        variant="plain"
         flat
         v-bind="props"
         height="32px"
@@ -30,16 +30,10 @@ const props = defineProps({
           variant="text"
           color="error"
         >
-          Block
-        </v-btn>
-        <v-btn
-          block
-          variant="text"
-          color="error"
-        >
           Report
         </v-btn>
       </v-list-item>
+      <slot></slot>
     </v-list>
-</v-menu>
+  </v-menu>
 </template>

@@ -1,8 +1,8 @@
-import { Posts_Unpublished, Posts } from "./post.model";
+import { Posts_Unpublished, Posts, Comments, Likes, Replies } from "./post.model";
 import { Profile_Followers, Profile_Following } from "./profile.model";
 
 export interface Return {
-  data?: Object,
+  data?: any,
   success: boolean,
   message?: string,
   error?: string,
@@ -30,6 +30,18 @@ export interface Return_Posts extends Return {
 
 export interface Return_Unpublished_Posts extends Return {
   data?: Posts_Unpublished | 'completed' | 'no-posts'
+}
+
+export interface Return_Posts_Comments extends Return {
+  data?: Comments | 'completed' | 'no-comments'
+}
+
+export interface Return_Posts_Likes extends Return {
+  data?: Likes | 'completed' | 'no-likes'
+}
+
+export interface Return_Posts_Replies extends Return {
+  data?: Replies | 'completed' | 'no-replies'
 }
 
 export interface Return_Compression_Item {

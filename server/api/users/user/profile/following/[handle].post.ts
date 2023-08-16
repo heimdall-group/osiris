@@ -49,11 +49,12 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       { $limit: skip + limit },
       {
         $project: {
+          _id : 0 ,
           user_avatar: "$user_following.user_avatar",
           user_handle: "$user_following.user_handle",
           user_verified: "$user_following.user_verified",
-          user_followed_by_current_user: { $cond: [result !== undefined, { $in: [result.uid, "$user_following.user_following"] }, false]},
-          user_follow_back_by_current_user: { $cond: [result !== undefined, { $in: [result.uid, "$user_following.user_followers"] }, false]},
+          current_user_followed: { $in: [result.uid, "$user_following.user_following"] },
+          current_user_follows: { $in: [result.uid, "$user_following.user_followers"] },
           user_same: {
             $eq: [ "$user_following.user_uid", result.uid ]
          },

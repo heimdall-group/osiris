@@ -11,6 +11,7 @@
   const profileStore = useProfileStore();
   profileStore.resetProfile();
   postsStore.resetPosts();
+  profileStore.resetProfileEdit();
   profileStore.resetFollowers();
   profileStore.resetFollowing();
 
@@ -51,7 +52,7 @@
         router.push('/')
       }
     }
-  })
+  });
 </script>
 
 <template>
@@ -79,7 +80,7 @@
               {{ state }}
               {{ profile.user_handle }}
               <v-icon v-if="profile.user_verified" title="Verified">mdi: mdi-check-decagram</v-icon>
-              <overlay-3-dot-menu :profile_prop="profile" />
+              <overlay-3-dot-menu :identifier="profile.user_handle" />
             </v-card-text>
             <v-row v-if="state === 'xs'" class="ma-0 pa-0" align="center">
               <v-col cols="auto">
@@ -94,8 +95,8 @@
               <v-col cols="12" class="pa-0 pt-1">
                 <profile-description-links />
               </v-col>
-              <v-col cols="12" class="pb-0">
-                <profile-follow-display />
+              <v-col cols="12" class="pa-0 pt-2">
+                <profile-follows />
               </v-col>
             </v-row>
             <v-row v-if="state === 'sm'" class="ma-0 pa-0" align="center">
@@ -108,7 +109,7 @@
                 <profile-description-links />
               </v-col>
               <v-col cols="12" class="pa-0 pt-2">
-                <profile-follow-display />
+                <profile-follows />
               </v-col>
             </v-row>
             <v-row v-if="state === 'md'" class="ma-0" align="center">
@@ -116,7 +117,7 @@
                 <v-avatar :image="profile.user_avatar" size="160px"></v-avatar>
               </v-col>
               <v-col class="pb-0">
-                <profile-follow-display />
+                <profile-follows />
               </v-col>
               <v-col cols="12" class="pb-0">
                 <v-row>
@@ -135,7 +136,7 @@
                 <v-avatar :image="profile.user_avatar" size="160px"></v-avatar>
               </v-col>
               <v-col class="pb-0">
-                <profile-follow-display />
+                <profile-follows />
               </v-col>
               <v-col cols="12" class="pb-0">
                 <v-row>
@@ -181,7 +182,7 @@
               </v-col>
             </v-row>
           </v-card>
-          <profile-posts />
+          <posts-profile />
         </v-col>
       </v-row>
     </v-container>

@@ -22,6 +22,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'formidable',
   ],
+  pinia: {
+    autoImports: [
+      'defineStore'
+    ],
+  },
   css: [
     'vuetify/lib/styles/main.sass',
     '@mdi/font/css/materialdesignicons.css',

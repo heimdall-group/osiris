@@ -1,15 +1,8 @@
-import { defineStore } from 'pinia';
-
 export const useVerifyStore = defineStore('verify', {
   state: () => {
-    return {
-      text_area_max_count: 128 as number,
-    };
+    return {};
   },
   getters: {
-    getTextAreaMaxCount():number {
-      return this.text_area_max_count;
-    },
   },
   actions: {
     global_required(value:string) {

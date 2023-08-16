@@ -2,6 +2,7 @@ import { DecodedIdToken, getAuth } from 'firebase-admin/auth';
 import Posts from "~/server/models/posts";
 import Users from "~/server/models/users";
 import { Return_Api } from 'models/return.model';
+import mongoose from 'mongoose';
 
 export default defineEventHandler(async (event):Promise<Return_Api> => {
   try {
@@ -34,8 +35,7 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       },
       {
         $addToSet: { user_posts: post_id },
-        $pull: { user_unpublished_posts: { $in: [post_id] } },
-        created_at: new Date().getTime(),
+        $pull: { user_unpublished_posts: { $in: [new mongoose.Types.ObjectId(post_id)] } },
       }
     );
     if (user === null) {

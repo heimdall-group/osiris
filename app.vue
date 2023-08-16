@@ -20,6 +20,7 @@
 @import url(~/assets/css/cursors.css);
 @import url(~/assets/css/selects.css);
 @import url(~/assets/css/texts.css);
+@import url(~/assets/css/ux.css);
 
 * {
   font-family: 'Quicksand-Regular';
@@ -27,41 +28,29 @@
 }
 
 html {
-  overflow: overlay;
   touch-action: manipulation;
 }
 
-body {
-  overflow: overlay;
-}
-
 .v-overlay__scrim {
-  background: rgba(var(--v-theme-background), 1)
+  background: rgb(var(--v-theme-background));
+  opacity: 0.7;
 }
 
 .mdi-check-decagram {
   color: rgb(var(--v-theme-verified));
 }
 
-.follow-button {
-  border-color: rgba(var(--v-theme-primary), 0.5);
-}
-
-.follow-back-button {
-  border-color: rgba(var(--v-theme-primary), 0.5);
-}
-
-.remove-follow-button {
-  border-color: rgba(var(--v-theme-primary), 0.5);
-}
-
-.edit-button {
-  border-color: rgba(var(--v-theme-primary), 0.5);
-}
-
 .v-btn .fa-solid,
 .v-btn .fa-regular {
   font-size: 0.875rem;
+}
+
+.fa-heart[data-prefix="fas"] {
+  color:red;
+  animation-duration: .45s;
+  animation-name: like-button-animation;
+  animation-timing-function: ease-in-out;
+  transform: scale(1);
 }
 
 /* Scroll */

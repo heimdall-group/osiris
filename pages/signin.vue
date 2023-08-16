@@ -3,7 +3,6 @@
   useHead({
     title: 'SignInPage',
   });
-  const store = useStore();
 </script>
 
 <template>

@@ -4,6 +4,7 @@ import { Upload_Options } from "models/upload.model";
 import { useStore } from "~/stores/main";
 import { useUploadStore } from "~/stores/upload";
 import { Post_Unpublished } from "models/post.model";
+import { useProfileStore } from '~/stores/profile';
 import { usePostsStore } from "~/stores/posts";
 export const posts_getUploadId = (uid: string):string => {
   const date = new Date().getTime();
@@ -17,9 +18,9 @@ export const posts_createPost = async (arr:Array<File>, options:Upload_Options):
     const store = useStore();
     const user = store.getUser;
 
-    if (Object.keys(user).length === 0) {
+    if (!profile_validRequest()) {
       throw {
-        message: 'User not authenticated',
+        message: 'User not signed in',
         code: 'upload/user-not-authenticated',
         severity: 4,
         type: 'client',
@@ -100,9 +101,9 @@ export const posts_publishPost = async (post: Post_Unpublished) => {
   try {
     const store = useStore();
     const user = store.getUser;
-    if (Object.keys(user).length === 0) {
+    if (!profile_validRequest()) {
       throw {
-        message: 'User not authenticated',
+        message: 'User not signed in',
         code: 'upload/user-not-authenticated',
         severity: 4,
         type: 'client',
@@ -118,7 +119,7 @@ export const posts_publishPost = async (post: Post_Unpublished) => {
       }
     });
     if (result.success) {
-      const result = await postStore.cutUnpublishedPost(post)
+      const result = postStore.spliceRemoveUnpublishedPost(post.post_id)
       return result;
     } else {
       throw {
@@ -131,6 +132,536 @@ export const posts_publishPost = async (post: Post_Unpublished) => {
     }
   } catch(error) {
     handle_error(error)
+  }
+}
+
+export const posts_removePost = async (post_id: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const postStore = usePostsStore();
+    const profileStore = useProfileStore();
+    const user = store.getUser;
+    const result = await $fetch(`/api/users/user/post/${post_id}`, {
+      method: 'DELETE',
+      body: {
+        token: await user.getIdToken(),
+      }
+    })
+
+    if (result.success) {
+      postStore.spliceRemovePost(post_id)
+      profileStore.decrementProfilePostsCount();
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt remove post',
+        code: 'posts/couldnt-remove-post',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_likePost = async (post_id: string, limit: number):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const postStore = usePostsStore();
+    const user = store.getUser;
+    const result: Return = await $fetch('/api/users/user/posts/likes/', {
+      method: 'POST',
+      body: {
+        token: await user.getIdToken(),
+        post_id: post_id,
+      }
+    })
+
+    if (result.success && result.data) {
+      const user = store.getUser;
+      const like: Return = await $fetch(`/api/users/user/post/likes/like`,{
+        method: 'POST',
+        body: {
+          token: await user.getIdToken(),
+        }
+      })
+      postStore.pushLikes(like , post_id, limit)
+      postStore.incrementPostLikeCount(post_id);
+      postStore.setLikesFalse(post_id);
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt like post',
+        code: 'posts/couldnt-like-post',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_unlikePost = async (post_id: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const postStore = usePostsStore();
+    const user = store.getUser;
+    const result = await $fetch('/api/users/user/posts/likes/', {
+      method: 'DELETE',
+      body: {
+        token: await user.getIdToken(),
+        post_id: post_id,
+      }
+    })
+
+    if (result.success) {
+      postStore.spliceRemovePostLike(post_id)
+      postStore.decrementPostLikeCount(post_id)
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt unlike post',
+        code: 'posts/couldnt-unlike-post',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_likeComment = async (comment_id: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const user = store.getUser;
+    const result = await $fetch('/api/users/user/posts/comments/likes', {
+      method: 'POST',
+      body: {
+        token: await user.getIdToken(),
+        comment_id: comment_id,
+      }
+    })
+
+    if (result.success) {
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt like comment',
+        code: 'posts/couldnt-like-comment',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_unlikeComment = async (comment_id: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const user = store.getUser;
+    const result = await $fetch('/api/users/user/posts/comments/likes/', {
+      method: 'DELETE',
+      body: {
+        token: await user.getIdToken(),
+        comment_id: comment_id,
+      }
+    })
+
+    if (result.success) {
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt unlike comment',
+        code: 'posts/couldnt-unlike-comment',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_likeReply = async (reply_id: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const user = store.getUser;
+    const result = await $fetch('/api/users/user/posts/comments/replies/likes', {
+      method: 'POST',
+      body: {
+        token: await user.getIdToken(),
+        reply_id: reply_id,
+      }
+    })
+
+    if (result.success) {
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt like reply',
+        code: 'posts/couldnt-like-reply',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_unlikeReply = async (reply_id: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const user = store.getUser;
+    const result = await $fetch('/api/users/user/posts/comments/replies/likes', {
+      method: 'DELETE',
+      body: {
+        token: await user.getIdToken(),
+        reply_id: reply_id,
+      }
+    })
+
+    if (result.success) {
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt unlike reply',
+        code: 'posts/couldnt-unlike-reply',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_commentPost = async (post_id: string, text: string, limit: number):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const postStore = usePostsStore();
+    const user = store.getUser;
+    const result: Return = await $fetch('/api/users/user/posts/comments/', {
+      method: 'POST',
+      body: {
+        token: await user.getIdToken(),
+        post_id: post_id,
+        text: text,
+      }
+    })
+    if (result.success && result.data) {
+      const comment: Return = await $fetch(`/api/users/user/post/comments/comment/${result.data.id}`,{
+        method: 'POST',
+        body: {
+          token: await user.getIdToken(),
+        }
+      }) 
+      postStore.pushComments(comment, post_id, limit);
+      postStore.incrementPostCommentCount(post_id);
+      postStore.setCommentsFalse(post_id);
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt comment on post',
+        code: 'posts/couldnt-comment-on-post',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_unCommentPost = async (post_id: string, comment_id: string):Promise<Return> => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const postStore = usePostsStore();
+    const user = store.getUser;
+    const result: Return = await $fetch('/api/users/user/posts/comments/', {
+      method: 'DELETE',
+      body: {
+        token: await user.getIdToken(),
+        post_id: post_id,
+        comment_id: comment_id,
+      }
+    })
+
+    if (result.success) {
+      postStore.spliceRemoveComment(post_id, comment_id);
+      postStore.decrementPostCommentCount(post_id);
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt remove comment on post',
+        code: 'posts/couldnt-remove-comment-on-post',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_replyComment = async (post_id: string, comment_id: string, text: string, limit: number) => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const postStore = usePostsStore();
+    const user = store.getUser;
+    const result: Return = await $fetch('/api/users/user/posts/comments/replies', {
+      method: 'POST',
+      body: {
+        token: await user.getIdToken(),
+        comment_id: comment_id,
+        post_id: post_id,
+        text: text,
+      }
+    })
+    if (result.success && result.data) {
+      const reply: Return = await $fetch(`/api/users/user/post/comments/replies/reply/${result.data.id}`,{
+        method: 'POST',
+        body: {
+          token: await user.getIdToken(),
+        }
+      })
+      postStore.pushReplies(reply, post_id, comment_id, limit);
+      postStore.incrementCommentReplyCount(post_id, comment_id);
+      postStore.setRepliesFalse(post_id, comment_id);
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt reply on comment',
+        code: 'posts/couldnt-reply-on-comment',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
+  }
+}
+
+export const posts_unReplyComment = async (post_id: string, comment_id: string, reply_id: string) => {
+  try {
+    if (!profile_validRequest()) {
+      throw {
+        message: 'User not signed in',
+        code: 'upload/user-not-authenticated',
+        severity: 4,
+        type: 'client',
+      }
+    };
+
+    const store = useStore();
+    const postStore = usePostsStore();
+    const user = store.getUser;
+    const result: Return = await $fetch('/api/users/user/posts/comments/replies', {
+      method: 'DELETE',
+      body: {
+        token: await user.getIdToken(),
+        comment_id: comment_id,
+        reply_id: reply_id,
+      }
+    })
+
+    if (result.success) {
+      postStore.spliceRemoveReply(post_id, comment_id, reply_id);
+      postStore.decrementCommentReplyCount(post_id, comment_id);
+      return {
+        success: true,
+        data: true,
+      }
+    } else {
+      throw {
+        message: 'Couldnt remove reply on comment',
+        code: 'posts/couldnt-remove-reply-on-comment',
+        severity: 1,
+        type: 'server',
+        server_error: result.error,
+      }
+    }    
+  } catch(error: any) {
+    handle_error(error)
+    return {
+      success: false,
+      data: false,
+    }
   }
 }
 

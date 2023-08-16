@@ -39,6 +39,7 @@ export default defineEventHandler(async (event):Promise<Return_Unpublished_Posts
       },
       {
         $project: {
+          _id : 0 ,
           post_id: "$_id",
           urls: "$urls",
           caption: "$caption",

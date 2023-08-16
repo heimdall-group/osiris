@@ -174,8 +174,8 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
     });
     post.save();
     const action = options.autopublish ? 
-      {$addToSet: { user_posts: id }} :
-      {$addToSet: { user_unpublished_posts: id }}
+      {$addToSet: { user_posts: post._id }} :
+      {$addToSet: { user_unpublished_posts: post._id }}
 
     const user = await Users.findOneAndUpdate(
       { user_uid: result.uid },
@@ -195,7 +195,7 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       error: error,
       success: false,
       server_message: {
-        request_endpoint: 'users/user/posts',
+        request_endpoint: 'users/user/posts/::token',
         request_type: 'POST',
       },
     }

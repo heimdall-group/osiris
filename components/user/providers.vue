@@ -44,7 +44,7 @@
           <v-list width="200px">
             <v-list-item
               v-for="(provider, index) in providers"
-              :key="index"
+              :key="`user-providers-${index}`"
               class="justify-center"
             >
               <v-btn

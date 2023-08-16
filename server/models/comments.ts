@@ -6,10 +6,8 @@ const schema = new mongoose.Schema(
     uid: String,
     text: String,
     likes: Array,
-    likes_count: Number,
     replies: Array,
-    reply_count: Number,
     created_at: Number,
   },
 )
-export default mongoose.model("", schema);
+export default mongoose.model("Comments", schema);

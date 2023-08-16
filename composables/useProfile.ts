@@ -3,8 +3,6 @@ import { useStore } from "~/stores/main";
 import { Profile } from 'models/profile.model';
 import { Return } from "models/return.model";
 
-// For public profiles. Not user_same profiles
-
 export const profile_validRequest = ():boolean => {
   const store = useStore();
   const user = store.getUser;
@@ -16,6 +14,8 @@ export const profile_validRequest = ():boolean => {
     return true
   }
 }
+
+// REFACTOR ALL THIS
 
 export const profilePage_addFollower = async ():Promise<Return> => {
   try {
@@ -29,8 +29,9 @@ export const profilePage_addFollower = async ():Promise<Return> => {
         type: 'client',
       }
     }
-    const result = await profile_addFollower(handle as string, profilePage_followStateUpdated)
+    const result = await profile_addFollower(handle as string)
     if (result.success) {
+      profilePage_followStateUpdated();
       return {
         success: true,
         data: true,
@@ -65,8 +66,9 @@ export const profilePage_removeFollower = async ():Promise<Return> => {
         type: 'client',
       }
     }
-    const result = await profile_removeFollower(handle as string, profilePage_followStateUpdated)
+    const result = await profile_removeFollower(handle as string)
     if (result.success) {
+      profilePage_followStateUpdated();
       return {
         success: true,
         data: true,
@@ -89,7 +91,7 @@ export const profilePage_removeFollower = async ():Promise<Return> => {
   
 }
 
-export const profileList_addFollower = async (handle: string):Promise<Return> => {
+export const profileList_addFollower = async (handle: string, user_same: boolean):Promise<Return> => {
   try {
     if (!profile_validRequest()) {
       throw {
@@ -99,8 +101,9 @@ export const profileList_addFollower = async (handle: string):Promise<Return> =>
         type: 'client',
       }
     }
-    const result = await profile_addFollower(handle as string, () => {profileList_followStateUpdated(handle, 'follow')})
+    const result = await profile_addFollower(handle as string)
     if (result.success) {
+      profileList_followStateUpdated(handle, 'follow', user_same)
       return {
         success: true,
         data: true,
@@ -122,7 +125,7 @@ export const profileList_addFollower = async (handle: string):Promise<Return> =>
   }
 }
 
-export const profileList_removeFollower = async (handle: string):Promise<Return> => {
+export const profileList_removeFollower = async (handle: string, user_same: boolean):Promise<Return> => {
   try {
     if (!profile_validRequest()) {
       throw {
@@ -132,8 +135,9 @@ export const profileList_removeFollower = async (handle: string):Promise<Return>
         type: 'client',
       }
     }
-    const result = await profile_removeFollower(handle as string, () => {profileList_followStateUpdated(handle, 'remove')})
+    const result = await profile_removeFollower(handle as string)
     if (result.success) {
+      profileList_followStateUpdated(handle, 'remove', user_same)
       return {
         success: true,
         data: true,
@@ -156,72 +160,7 @@ export const profileList_removeFollower = async (handle: string):Promise<Return>
 
 }
 
-export const profileList_user_same_addFollower = async (handle: string):Promise<Return> => {
-  try {
-    if (!profile_validRequest()) {
-      throw {
-        message: 'User not signed in',
-        code: 'profile/user-not-authenticated',
-        severity: 4,
-        type: 'client',
-      }
-    }
-    const result = await profile_addFollower(handle as string, () => {profileList_user_same_followStateUpdated(handle, 'follow')})
-    if (result.success) {
-      return {
-        success: true,
-        data: true,
-      }
-    } else {
-      throw {
-        message: 'Follower not added',
-        code: 'profile/follower-not-added-list',
-        severity: 1,
-        type: 'server',
-        server_error: result.error,
-      }
-    }
-  } catch(error:any) {
-    handle_error(error)
-    return {
-      success: false,
-    }
-  }
-}
-
-export const profileList_user_same_removeFollower = async (handle: string):Promise<Return> => {
-  try {
-    if (!profile_validRequest()) {
-      throw {
-        message: 'User not signed in',
-        code: 'profile/user-not-authenticated',
-        severity: 4,
-        type: 'client',
-      }
-    }
-    const result = await profile_removeFollower(handle as string, () => {profileList_user_same_followStateUpdated(handle, 'remove')})
-    if (result.success) {
-      return {
-        success: true,
-        data: true,
-      }
-    } else {
-      throw {
-        message: 'Follower not removed',
-        code: 'profile/follower-not-removed-list',
-        severity: 1,
-        type: 'server',
-        server_error: result.error,
-      }
-    }
-  } catch(error:any) {
-    handle_error(error)
-    return {
-      success: false,
-    }
-  }
-
-}
+// Callbacks
 
 export const profilePage_followStateUpdated = async ():Promise<void> => {
   const store = useStore();
@@ -230,7 +169,7 @@ export const profilePage_followStateUpdated = async ():Promise<void> => {
   const route = useRoute();
   const handle = route.params.handle;
   const token = await user.getIdToken();
-  const result = await $fetch(`/api/users/user/profile/${handle}`, {
+  const result:Return = await $fetch(`/api/users/user/profile/${handle}`, {
     method: 'POST',
     body: {
       token: token,
@@ -245,18 +184,18 @@ export const profilePage_followStateUpdated = async ():Promise<void> => {
   }
 }
 
-export const profileList_followStateUpdated = async (handle: string, type: 'follow'|'remove',):Promise<void> => {
+export const profileList_followStateUpdated = async (handle: string, type: 'follow'|'remove', user_same: boolean,):Promise<void> => {
   const profileStore = useProfileStore();
-  profileStore.changeFollowerState(handle, type);
+  console.log(user_same)
+  if (user_same) {
+    profileStore.changeFollowerStateUserSame(handle, type);
+  } else {
+    profileStore.changeFollowerState(handle, type);
+  }
+  
 }
 
-export const profileList_user_same_followStateUpdated = async (handle: string, type: 'follow'|'remove',):Promise<void> => {
-  const profileStore = useProfileStore();
-  profileStore.changeFollowerStateUserSame(handle, type);
-}
-
-
-const profile_removeFollower = async (handle: string, callback: Function):Promise<Return> => {
+const profile_removeFollower = async (handle: string):Promise<Return> => {
   try {
     const store = useStore();
     const user = store.getUser;
@@ -280,13 +219,11 @@ const profile_removeFollower = async (handle: string, callback: Function):Promis
     });
 
     if (result.success) {
-      callback();
       return {
         success: true,
         data: true,
       }
     } else {
-      // Error thrown where function is called
       return {
         success: false,
         error: result.error,
@@ -300,7 +237,7 @@ const profile_removeFollower = async (handle: string, callback: Function):Promis
   }
 }
 
-const profile_addFollower = async (handle: string, callback: Function):Promise<Return> => {
+const profile_addFollower = async (handle: string):Promise<Return> => {
   try {
     const store = useStore();
     const user = store.getUser;
@@ -324,13 +261,11 @@ const profile_addFollower = async (handle: string, callback: Function):Promise<R
     });
 
     if (result.success) {
-      callback();
       return {
         success: true,
         data: true,
       }
     } else {
-      // Error thrown where function is called
       return {
         success: false,
         error: result.error,

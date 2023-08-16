@@ -23,6 +23,7 @@ export default defineEventHandler(async (event):Promise<Return_Api> => {
       }, 
       {
         $project: {
+          _id : 0 ,
           user_email: '$user_email',
           user_handle: '$user_handle',
           user_avatar: '$user_avatar',

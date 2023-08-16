@@ -4,8 +4,9 @@
   const viewsStore = useViewsStore();
   const state = computed(() => viewsStore.getState)
 
-  const likes_dialog = ref(false);
-  const comment_dialog = ref(false);
+  const like_section = ref(false);
+  const comment_section = ref(false);
+  const loading = ref(false);
 
   const props = defineProps({
     cols: {
@@ -16,27 +17,33 @@
       type: Object,
       required: true,
     },
-    index: Number
   })
 
-  const handleLiked = () => {
-    props.post.liked = !props.post.liked
-    if (props.post.liked) {
-      props.post.liked = true;
-      props.post.likes_total++
+  const handleLiked = async () => {
+    if (!props.post.liked_by_current_user) {
+      const result = await posts_likePost(props.post.post_id, props.post.likes_count)
+      if (result.success) {
+        props.post.liked_by_current_user = true
+      }
     } else {
-      props.post.liked = false;
-      props.post.likes_total--
+      const result = await posts_unlikePost(props.post.post_id)
+      if (result.success) {
+        props.post.liked_by_current_user = false
+      }
     }
   }
   const handleTotalLikes = (event:Event) => {
     event.stopPropagation();
-    likes_dialog.value = true;
-    // Open likes dialog, which has pagnation ect
-    // Stop event propagation
+    like_section.value = !like_section.value;
   }
   const handleTotalComments = () => {
-    comment_dialog.value = true
+    comment_section.value = !comment_section.value
+  }
+
+  const removePost = async () => {
+    loading.value = true;
+    const result = await posts_removePost(props.post.post_id)
+    loading.value = false;
   }
 </script>
 
@@ -45,106 +52,115 @@
     :cols="cols"
     :class="[state === 'xs' ? 'py-2' : 'pa-2', 'd-flex', 'justify-center']"
   >
-    <v-card
-      rounded="lg"
-      max-width="680px"
-      elevation="10"
-      variant="flat"
-    >
-      <v-list>
-        <v-list-item
-          :prepend-avatar="post.user.avatar_url"
+    <v-row justify="center" class="ma-0">
+      <v-col 
+        class="pa-0"
+        cols="12"
+        sm="12"
+        md="8"
+        lg="6"
+        xl="7"
+        xxl="6"
+      >
+        <posts-overlays-comments v-model="comment_section" :post="post" />
+        <v-card
+          rounded="lg"
+          width="100%"
+          max-width="600px"
+          elevation="10"
+          variant="flat"
         >
-          <v-list-item-title>
-            <nuxt-link :to="`/profile/${post.user.handle}`">{{ post.user.handle }}</nuxt-link>
+          <v-list>
+            <v-list-item
+              :prepend-avatar="post.user.avatar_url"
+            >
+              <v-list-item-title>
+                <nuxt-link :to="`/profile/${post.user.handle}`">{{ post.user.handle }}</nuxt-link>
+                <v-icon v-if="post.user.verified" title="Verified">mdi: mdi-check-decagram</v-icon>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ post.user.displayname }}
+              </v-list-item-subtitle>
+              <template v-slot:append>
+                <overlay-3-dot-menu :identifier="post.post_id">
+                  <v-list-item
+                    v-if="post.post_by_current_user"
+                    class="pa-0"
+                  >
+                    <overlay-dialogs-confirmation
+                      text="Remove Post"
+                      :loading="loading"
+                      color="error"
+                      @callback="removePost"
+                    />
+                  </v-list-item>
+                </overlay-3-dot-menu>
+              </template>
+            </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <posts-images
+            :urls="post.urls"
+          />
+          <v-divider></v-divider>
+          <v-row class="ma-0">
+            <v-col 
+              cols="auto" 
+              class="cursor-pointer pl-4" 
+              @click="handleLiked"
+            >
+                <font-awesome-icon :icon="post.liked_by_current_user ? 'fa-solid fa-heart' : 'fa-regular fa-heart'" />
+            </v-col>
+            <v-col
+              cols="auto" 
+              class="cursor-pointer"
+              @click="handleTotalComments"
+            >
+              <font-awesome-icon icon="fa-regular fa-comment" />
+            </v-col>
+          </v-row>
+          <v-row class="ma-0">
+            <v-card-subtitle 
+              class="pa-4 pt-0 pb-2 cursor-pointer user-select-none"
+              @click="handleTotalLikes"
+            >
+              {{ post.likes_count }} {{ post.likes_count === 1 ? 'Like' : 'Likes'}}
+              <posts-overlays-likes :post="post" v-model="like_section" />
+            </v-card-subtitle>
+            <v-card-subtitle 
+              class="pa-4 pt-0 pb-2 cursor-pointer user-select-none"
+              @click="handleTotalComments"
+            >
+              {{ post.comments_count }} {{ post.comments_count === 1 ? 'Comment' : 'Comments'}}
+            </v-card-subtitle>
+          </v-row>
+          <v-card-text v-if="post.caption" class="text-body-2 py-0 caption-section">
+            <nuxt-link class="text-body-1" :to="`/profile/${post.user.handle}`">{{ post.user.handle }}</nuxt-link>
             <v-icon v-if="post.user.verified" title="Verified">mdi: mdi-check-decagram</v-icon>
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ post.user.displayname }}
-          </v-list-item-subtitle>
-          <template v-slot:append>
-            <overlay-3-dot-menu :profile_prop="post.user" />
-          </template>
-        </v-list-item>
-      </v-list>
-      <v-divider></v-divider>
-      <posts-images
-        :urls="post.urls"
-      />
-      <v-divider></v-divider>
-      <v-row class="ma-0">
-        <v-col 
-          cols="auto" 
-          class="cursor-pointer pl-4" 
-          @click="handleLiked"
-        >
-            <font-awesome-icon :icon="post.liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart'" />
-        </v-col>
-        <v-col
-          cols="auto" 
-          class="cursor-pointer"
-          @click="handleTotalComments"
-        >
-          <font-awesome-icon icon="fa-regular fa-comment" />
-        </v-col>
-      </v-row>
-      <v-row class="ma-0">
-        <v-card-subtitle 
-          class="pa-4 pt-0 pb-2 cursor-pointer user-select-none"
-          @click="handleTotalLikes"
-        >
-          {{ post.likes_total }} {{ post.likes_total === 1 ? 'Like' : 'Likes'}}
-          <v-dialog 
-          v-model="likes_dialog" 
-          transition="dialog-bottom-transition"
-          width="auto"
-        >
-          <v-card
-            class="pa-4"
+            : {{ post.caption }}
+          </v-card-text>
+          <v-card-subtitle 
+            class="pa-4 cursor-pointer user-select-none"
+            @click="handleTotalComments"
           >
-            List all likes
-          </v-card>
-        </v-dialog>
-        </v-card-subtitle>
-        <v-card-subtitle 
-          class="pa-4 pt-0 pb-2 cursor-pointer user-select-none"
-          @click="handleTotalComments"
-        >
-          {{ post.comments_total }} {{ post.likes_total === 1 ? 'Comment' : 'Comments'}}
-        </v-card-subtitle>
-      </v-row>
-      <v-card-text v-if="post.caption" class="text-body-2 py-0 caption-section">
-        <nuxt-link class="text-body-1" :to="`/profile/${post.user.handle}`">{{ post.user.handle }}</nuxt-link>
-        <v-icon v-if="post.user.verified" title="Verified">mdi: mdi-check-decagram</v-icon>
-        : {{ post.caption }}
-      </v-card-text>
-      <v-card-subtitle 
-        class="pa-4 cursor-pointer user-select-none"
-        @click="handleTotalComments"
-      >
-        View all comments ...
-        <v-dialog
-          v-model="comment_dialog" 
-          transition="dialog-bottom-transition"
-          width="auto"
-        >
-          <v-card
-            class="pa-4"
+            View all comments ...
+          </v-card-subtitle>
+          <v-card-subtitle 
+            class="pa-4 pt-0"
           >
-            List all comments and replies
-          </v-card>
-        </v-dialog>
-      </v-card-subtitle>
-      <v-card-subtitle 
-        class="pa-4 pt-0"
-      >
-        {{ new Date(post.created_at).toLocaleDateString() }}
-      </v-card-subtitle>  
-    </v-card>
+            {{ new Date(post.created_at).toLocaleDateString() }}
+          </v-card-subtitle>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-col>
 </template>
 
 <style scoped>
+.v-card {
+  margin: 0 auto;
+}
+
 .v-btn-no-hover::before {
    background-color: transparent !important;
 }
@@ -166,14 +182,6 @@
    -webkit-line-clamp: 3; /* number of lines to show */
            line-clamp: 3; 
    -webkit-box-orient: vertical;
-}
-
-.fa-heart[data-prefix="fas"] {
-  color:red;
-  animation-duration: .45s;
-  animation-name: like-button-animation;
-  animation-timing-function: ease-in-out;
-  transform: scale(1);
 }
 
 .fa-heart, .fa-comment {
