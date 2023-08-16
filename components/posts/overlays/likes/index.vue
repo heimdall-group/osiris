@@ -69,12 +69,11 @@
 <v-dialog 
   v-model="like_section"
   transition="dialog-bottom-transition"
-  min-width="300px"
-  max-width="400px"
+  width="300px"
 >
   <v-card
     rounded="lg"
-    height="600px"
+    height="500px"
     width="100%"
   >
     <div class="ux-list">
